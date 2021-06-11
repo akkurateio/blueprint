@@ -1,0 +1,15 @@
+models:
+  User:
+    firstname: nullable string
+    lastname: nullable string
+    email: string unique
+    email_verified_at: nullable timestamp
+    password: string
+    remember_token: nullable string:100
+    is_active: nullable boolean default:1
+
+controllers:
+  User:
+    resource: api.index, api.show, api.update, api.destroy
+
+seeders: User

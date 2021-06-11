@@ -65,6 +65,21 @@ class ModelGenerator implements Generator
     protected function populateStub(string $stub, Model $model)
     {
         if (Blueprint::isLaravel8OrHigher()) {
+
+            if ($model->name() === 'User') {
+                $options = '';
+                if (config('blueprint.enabled.api')) {
+                    $options .= '.api';
+                }
+                if (config('blueprint.enabled.cashier')) {
+                    $options .= '.billable';
+                }
+                if (config('blueprint.enabled.permissions')) {
+                    $options .= '.permissions';
+                }
+                $stub = $this->filesystem->stub("user$options.class.stub");
+            }
+
             $stub = str_replace('{{ namespace }}', $model->fullyQualifiedNamespace(), $stub);
             $stub = str_replace(PHP_EOL . 'class {{ class }}', $this->buildClassPhpDoc($model) . PHP_EOL . 'class {{ class }}', $stub);
             $stub = str_replace('{{ class }}', $model->name(), $stub);

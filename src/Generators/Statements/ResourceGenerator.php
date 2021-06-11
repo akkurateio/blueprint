@@ -39,12 +39,12 @@ class ResourceGenerator implements Generator
         $stub = $this->filesystem->stub('resource.stub');
 
         /**
- * @var \Blueprint\Models\Controller $controller
-*/
+         * @var \Blueprint\Models\Controller $controller
+         */
         foreach ($tree->controllers() as $controller) {
             foreach ($controller->methods() as $method => $statements) {
                 foreach ($statements as $statement) {
-                    if (! $statement instanceof ResourceStatement) {
+                    if (!$statement instanceof ResourceStatement) {
                         continue;
                     }
 
@@ -54,7 +54,7 @@ class ResourceGenerator implements Generator
                         continue;
                     }
 
-                    if (! $this->filesystem->exists(dirname($path))) {
+                    if (!$this->filesystem->exists(dirname($path))) {
                         $this->filesystem->makeDirectory(dirname($path), 0755, true);
                     }
 
@@ -103,8 +103,8 @@ class ResourceGenerator implements Generator
         $context = Str::singular($resource->reference());
 
         /**
- * @var \Blueprint\Models\Model $model
-*/
+         * @var \Blueprint\Models\Model $model
+         */
         $model = $this->tree->modelForContext($context);
 
         $data = [];
@@ -120,6 +120,12 @@ class ResourceGenerator implements Generator
         foreach ($this->visibleColumns($model) as $column) {
             $data[] = self::INDENT . '\'' . $column . '\' => $this->' . $column . ',';
         }
+        foreach ($this->belongsToRelations($model) as $modelName => $relation) {
+            $data[] = self::INDENT . '\'' . $relation . '\' => new ' . $modelName . 'Resource($this->whenLoaded(\'' . $relation . '\')),';
+        }
+        foreach ($this->hasManyRelations($model) as $modelName => $relation) {
+            $data[] = self::INDENT . '\'' . $relation . '\' => ' . $modelName . 'Resource::collection($this->whenLoaded(\'' . $relation . '\')),';
+        }
         $data[] = '        ];';
 
         return implode(PHP_EOL, $data);
@@ -130,9 +136,38 @@ class ResourceGenerator implements Generator
         return array_diff(
             array_keys($model->columns()),
             [
-            'password',
-            'remember_token',
+                'password',
+                'remember_token',
             ]
         );
+    }
+
+    private function hasManyRelations(Model $model): array
+    {
+        $columns = [];
+
+        if (!empty($model->relationships())) {
+            if (isset($model->relationships()['hasMany'])) {
+                foreach ($model->relationships()['hasMany'] as $relationship) {
+                    $columns[$relationship] = Str::plural(Str::lower($relationship));
+                }
+            }
+        }
+
+        return $columns;
+    }
+
+    private function belongsToRelations(Model $model): array
+    {
+        $columns = [];
+
+        if (isset($model->relationships()['belongsTo'])) {
+            foreach ($model->relationships()['belongsTo'] as $relationship) {
+                $column = Str::beforeLast($relationship, '_id');
+                $columns[Str::studly($column)] = $column;
+            }
+        }
+
+        return $columns;
     }
 }

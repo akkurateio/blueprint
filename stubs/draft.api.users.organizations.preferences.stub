@@ -1,0 +1,28 @@
+models:
+  Organization:
+    name: string unique index
+    email: nullable string
+    url: nullable string
+    is_active: nullable boolean default:1
+    preferences: nullable json
+    relationships:
+      hasMany: User
+
+  User:
+    firstname: nullable string
+    lastname: nullable string
+    email: string unique
+    email_verified_at: nullable timestamp
+    password: string
+    remember_token: nullable string:100
+    is_active: nullable boolean default:1
+    preferences: nullable json
+    organization_id: id foreign
+
+controllers:
+  Organization:
+    resource: api
+  User:
+    resource: api.index, api.show, api.update, api.destroy
+
+seeders: Organization, User

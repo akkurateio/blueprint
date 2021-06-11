@@ -58,6 +58,10 @@ class RouteGenerator implements Generator
         $className = $this->getClassName($controller);
         $slug = Str::kebab($controller->prefix());
 
+        if (config('blueprint.routes_plural')) {
+            $slug = Str::plural($slug);
+        }
+
         foreach (array_diff($methods, Controller::$resourceMethods) as $method) {
             $routes .= $this->buildRouteLine($className, $slug, $method);
             $routes .= PHP_EOL;

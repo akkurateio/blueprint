@@ -482,7 +482,12 @@ class TestGenerator implements Generator
                 }
             }
 
-            $call = sprintf('$response = $this->%s(route(\'%s.%s\'', $this->httpMethodForAction($name), Str::kebab($context), $name);
+            $route = Str::kebab($context);
+            if (config('blueprint.routes_plural')) {
+                $route = Str::plural($route);
+            }
+
+            $call = sprintf('$response = $this->%s(route(\'%s.%s\'', $this->httpMethodForAction($name), $route, $name);
 
             if (in_array($name, ['edit', 'update', 'show', 'destroy'])) {
                 $call .= ', $' . Str::camel($context);

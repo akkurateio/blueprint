@@ -160,4 +160,27 @@ return [
         'view' => \Blueprint\Generators\Statements\ViewGenerator::class,
     ],
 
+    'routes_plural' => true,
+
+    'filterable' => [
+        'name',
+        'firstname',
+        'lastname',
+        'email',
+        'title',
+        'reference'
+    ],
+
+    'enabled' => [
+        'user-management' => config('akkurate.features') && in_array('user-management', config('akkurate.features')),
+        'cashier' => config('akkurate.features') && in_array('cashier', config('akkurate.features')),
+        'permissions' => config('akkurate.features') && in_array('spatie-permissions', config('akkurate.features')),
+        'preferences' => config('akkurate.features') && in_array('preferences', config('akkurate.features')),
+        'organizations' => config('akkurate.features') && in_array('organizations', config('akkurate.features')),
+        'api' => config('akkurate.features') && in_array('api', config('akkurate.features')),
+        'api-docs' => config('akkurate.features') && in_array('api-docs', config('akkurate.features')),
+        'pagination' => config('akkurate.features') && in_array('api-pagination', config('akkurate.features')),
+        'query-builder' => config('akkurate.features') && in_array('query-builder', config('akkurate.features')),
+        'json-api-paginate' => config('akkurate.features') && in_array('json-paginate', config('akkurate.features'))
+    ],
 ];

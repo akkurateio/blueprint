@@ -42,12 +42,24 @@ class SeederGenerator implements Generator
             $stub = $this->filesystem->stub('seeder.no-factory.stub');
         }
 
+        $databaseSeederPath = database_path('seeders/DatabaseSeeder.php');
+        $databaseSeeder = '$this->call([' . PHP_EOL;
+
+        if (config('blueprint.enabled.permissions')) {
+            $databaseSeeder .= '           \Akkurateio\LaravelInstaller\Seeders\PermissionSeeder::class,' . PHP_EOL;
+        }
+
         foreach ($tree->seeders() as $model) {
             $path = $this->getPath($model);
             $this->filesystem->put($path, $this->populateStub($stub, $model));
+            $databaseSeeder .= '           ' . $model . 'Seeder::class,' . PHP_EOL;
 
             $output['created'][] = $path;
         }
+
+        $databaseSeeder .= '        ]);';
+
+        file_put_contents($databaseSeederPath, str_replace('// \\App\\Models\\User::factory(10)->create();', $databaseSeeder, file_get_contents($databaseSeederPath)));
 
         return $output;
     }

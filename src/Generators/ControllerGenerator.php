@@ -171,7 +171,21 @@ class ControllerGenerator implements Generator
                     $body .= self::INDENT . $statement->output($controller->prefix(), $name, $using_validation) . PHP_EOL;
                     $this->addImport($controller, $this->determineModel($controller, $statement->reference()));
                 } elseif ($statement instanceof QueryStatement) {
-                    $body .= self::INDENT . $statement->output($controller->prefix()) . PHP_EOL;
+                    if (config('blueprint.enabled.query-builder')) {
+                        $output = '$' . Str::camel(Str::plural($controller->name())) . ' = QueryBuilder::for('. $controller->name() .'::class)' . PHP_EOL;
+                        $output .= self::INDENT . self::INDENT . '->allowedFilters([' . $this->getFilters($controller) . '])'. PHP_EOL;
+                        $output .= self::INDENT . self::INDENT . '->allowedIncludes([' . $this->getIncludes($controller) . '])'. PHP_EOL;
+                        $output .= self::INDENT . self::INDENT;
+                        if (config('blueprint.enabled.pagination')) {
+                            $output .= config('blueprint.enabled.json-api-paginate') ? '->jsonPaginate();' : '->paginate();';
+                        } else {
+                            $output .= '->get();';
+                        }
+                        $body .= self::INDENT . $output . PHP_EOL;
+                        $this->addImport($controller, 'Spatie\QueryBuilder\QueryBuilder');
+                    } else {
+                        $body .= self::INDENT . $statement->output($controller->prefix()) . PHP_EOL;
+                    }
                     $this->addImport($controller, $this->determineModel($controller, $statement->model()));
                 }
 
@@ -247,5 +261,46 @@ class ControllerGenerator implements Generator
         }
 
         return config('blueprint.namespace') . '\\' . ($sub_namespace ? $sub_namespace . '\\' : '') . $model_name;
+    }
+
+    private function getFilters($controller): string
+    {
+        $filters = '';
+
+        if (isset($this->tree->models()[$controller->name()])) {
+            $model = $this->tree->models()[$controller->name()];
+            foreach ($model->columns() as $column) {
+                if (in_array($column->name(), config('blueprint.filterable'))) {
+                    $filters .= '\'' . $column->name() . '\'' . ', ';
+                }
+            }
+        }
+
+        return rtrim($filters, ', ');
+    }
+
+    private function getIncludes($controller): string
+    {
+        $includes = '';
+
+        if (isset($this->tree->models()[$controller->name()])) {
+            $model = $this->tree->models()[$controller->name()];
+            if (! empty($model->relationships())) {
+                if (isset($model->relationships()['hasMany'])) {
+                    foreach ($model->relationships()['hasMany'] as $relationship) {
+                        $relation = Str::plural(Str::lower($relationship));
+                        $includes .= "'$relation'" . ', ';
+                    }
+                }
+                if (isset($model->relationships()['belongsTo'])) {
+                    foreach ($model->relationships()['belongsTo'] as $relationship) {
+                        $relation = Str::beforeLast($relationship, '_id');
+                        $includes .= "'$relation'" . ', ';
+                    }
+                }
+            }
+        }
+
+        return rtrim($includes, ', ');
     }
 }

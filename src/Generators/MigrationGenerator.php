@@ -8,6 +8,7 @@ use Blueprint\Models\Model;
 use Blueprint\Tree;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Symfony\Component\Finder\SplFileInfo;
 use Illuminate\Filesystem\Filesystem;
@@ -68,6 +69,15 @@ class MigrationGenerator implements Generator
  * @var \Blueprint\Models\Model $model
 */
         foreach ($tree->models() as $model) {
+            if ($model->name() === 'User') {
+                if (file_exists($file = database_path('migrations/2014_10_12_000000_create_users_table.php'))) {
+                    File::delete($file);
+                }
+                if (file_exists($file = database_path('migrations/2021_05_12_120000_change_name_to_firstname_and_lastname_for_default_users.php'))) {
+                    File::delete($file);
+                }
+            }
+
             $tables['tableNames'][$model->tableName()] = $this->populateStub($stub, $model);
 
             if (! empty($model->pivotTables())) {
@@ -95,7 +105,12 @@ class MigrationGenerator implements Generator
         );
 
         foreach ($tables['tableNames'] as $tableName => $data) {
-            $path = $this->getTablePath($tableName, $sequential_timestamp->addSecond(), $overwrite);
+            if ($tableName === 'users') {
+                $path = 'database/migrations/2014_10_12_000000_create_users_table.php';
+            } else {
+                $path = $this->getTablePath($tableName, $sequential_timestamp->addSecond(), $overwrite);
+            }
+
             $action = $this->filesystem->exists($path) ? 'updated' : 'created';
             $this->filesystem->put($path, $data);
 
