@@ -298,11 +298,22 @@ class ModelGenerator implements Generator
 
     protected function addTraits(Model $model, $stub)
     {
+        if (! empty($model->traits())) {
+            foreach ($model->traits() as $trait => $import) {
+                $stub = str_replace('use Illuminate\\Database\\Eloquent\\Factories\\HasFactory;', 'use Illuminate\\Database\\Eloquent\\Factories\\HasFactory;' . PHP_EOL . "use $import;", $stub);
+                $stub = Str::replaceFirst('use HasFactory', "use HasFactory, $trait", $stub);
+            }
+        }
+
         if (!$model->usesSoftDeletes()) {
             return $stub;
         }
 
-        $stub = str_replace('use Illuminate\\Database\\Eloquent\\Model;', 'use Illuminate\\Database\\Eloquent\\Model;' . PHP_EOL . 'use Illuminate\\Database\\Eloquent\\SoftDeletes;', $stub);
+        if ($model->name() === 'User') {
+            $stub = str_replace('use Illuminate\\Notifications\\Notifiable;', 'use Illuminate\\Notifications\\Notifiable;' . PHP_EOL . 'use Illuminate\\Database\\Eloquent\\SoftDeletes;', $stub);
+        } else {
+            $stub = str_replace('use Illuminate\\Database\\Eloquent\\Model;', 'use Illuminate\\Database\\Eloquent\\Model;' . PHP_EOL . 'use Illuminate\\Database\\Eloquent\\SoftDeletes;', $stub);
+        }
         if (Blueprint::isLaravel8OrHigher()) {
             $stub = Str::replaceFirst('use HasFactory', 'use HasFactory, SoftDeletes', $stub);
         } else {

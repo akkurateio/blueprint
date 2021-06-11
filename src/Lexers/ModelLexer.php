@@ -168,6 +168,11 @@ class ModelLexer implements Lexer
             unset($columns['relationships']);
         }
 
+        if (isset($columns['traits'])) {
+            $model->addTrait($columns['traits']);
+            unset($columns['traits']);
+        }
+
         if (isset($columns['indexes'])) {
             foreach ($columns['indexes'] as $index) {
                 $model->addIndex(new Index(key($index), array_map('trim', explode(',', current($index)))));

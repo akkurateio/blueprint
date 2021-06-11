@@ -14,6 +14,7 @@ class Model
     private $morphTo;
     private $columns = [];
     private $relationships = [];
+    private $traits = [];
     private $pivotTables = [];
     private $indexes = [];
 
@@ -73,6 +74,11 @@ class Model
     public function relationships(): array
     {
         return $this->relationships;
+    }
+
+    public function traits(): array
+    {
+        return $this->traits;
     }
 
     public function primaryKey()
@@ -151,6 +157,11 @@ class Model
         }
 
         $this->relationships[$type][] = $reference;
+    }
+
+    public function addTrait(array $traits)
+    {
+        $this->traits = $traits;
     }
 
     public function addPivotTable(string $reference)
