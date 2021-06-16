@@ -139,7 +139,7 @@ class ConfigCommand extends Command
             $this->filesystem->stub("$stub.stub")
         );
 
-        $command = file_exists(base_path('docker-composer.yaml')) ? 'sail' : 'php';
+        $command = file_exists(base_path('docker-compose.yaml')) ? 'sail' : 'php';
 
         $this->info('You’re good to go! Feel free to modify the draft.yaml file or just run:');
         if (config('blueprint.enabled.api') && config('blueprint.enabled.user-management')) {
