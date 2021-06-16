@@ -139,17 +139,19 @@ class ConfigCommand extends Command
             $this->filesystem->stub("$stub.stub")
         );
 
+        $command = file_exists(base_path('docker-composer.yaml')) ? 'sail' : 'php';
+
         $this->info('You’re good to go! Feel free to modify the draft.yaml file or just run:');
         if (config('blueprint.enabled.api') && config('blueprint.enabled.user-management')) {
-            $this->comment('php artisan blueprint:build && php artisan migrate:fresh && php artisan passport:install --force && php artisan akkurate:user');
+            $this->comment("$command artisan blueprint:build && $command artisan migrate:fresh && $command artisan passport:install --force && $command artisan akkurate:user");
         } else {
-            $this->comment('php artisan blueprint:build && php artisan migrate');
+            $this->comment("$command artisan blueprint:build && $command artisan migrate");
         }
 
         if (config('blueprint.enabled.api-docs')) {
             $this->newLine();
             $this->info('To generate API docs:');
-            $this->comment('php artisan scribe:generate');
+            $this->comment("$command artisan scribe:generate");
         }
     }
 
