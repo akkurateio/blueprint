@@ -114,10 +114,10 @@ class FactoryGenerator implements Generator
         $fillable = $this->fillableColumns($model->columns());
 
         /**
- * @var \Blueprint\Models\Column $column
-*/
+         * @var \Blueprint\Models\Column $column
+        */
         foreach ($fillable as $column) {
-            if ($column->name() === 'id') {
+            if ($column->name() === 'id' || $column->name() === 'parent_id') {
                 continue;
             }
 
