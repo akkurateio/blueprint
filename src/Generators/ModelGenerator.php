@@ -305,6 +305,17 @@ class ModelGenerator implements Generator
             }
         }
 
+        if (! empty($model->interface())) {
+            foreach ($model->interface() as $interface => $import) {
+                $stub = str_replace('use Illuminate\\Database\\Eloquent\\Factories\\HasFactory;', 'use Illuminate\\Database\\Eloquent\\Factories\\HasFactory;' . PHP_EOL . "use $import;", $stub);
+                if ($model->name() === 'User') {
+                    $stub = Str::replaceFirst('extends Authenticatable', "extends Authenticatable implements $interface", $stub);
+                } else {
+                    $stub = Str::replaceFirst('extends Model', "extends Model implements $interface", $stub);
+                }
+            }
+        }
+
         if (!$model->usesSoftDeletes()) {
             return $stub;
         }

@@ -173,6 +173,11 @@ class ModelLexer implements Lexer
             unset($columns['traits']);
         }
 
+        if (isset($columns['implements'])) {
+            $model->addInterface($columns['implements']);
+            unset($columns['implements']);
+        }
+
         if (isset($columns['indexes'])) {
             foreach ($columns['indexes'] as $index) {
                 $model->addIndex(new Index(key($index), array_map('trim', explode(',', current($index)))));

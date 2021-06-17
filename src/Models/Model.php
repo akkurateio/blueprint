@@ -15,6 +15,7 @@ class Model
     private $columns = [];
     private $relationships = [];
     private $traits = [];
+    private $interface = [];
     private $pivotTables = [];
     private $indexes = [];
 
@@ -79,6 +80,11 @@ class Model
     public function traits(): array
     {
         return $this->traits;
+    }
+
+    public function interface(): array
+    {
+        return $this->interface;
     }
 
     public function primaryKey()
@@ -162,6 +168,11 @@ class Model
     public function addTrait(array $traits)
     {
         $this->traits = $traits;
+    }
+
+    public function addInterface(array $interface)
+    {
+        $this->interface = $interface;
     }
 
     public function addPivotTable(string $reference)
