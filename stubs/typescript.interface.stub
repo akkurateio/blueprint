@@ -1,0 +1,4 @@
+{{ imports }}export interface Model{{ model }} {
+  id: number
+  //
+}
