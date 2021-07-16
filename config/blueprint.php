@@ -158,6 +158,7 @@ return [
         'notification' => \Blueprint\Generators\Statements\NotificationGenerator::class,
         'resource' => \Blueprint\Generators\Statements\ResourceGenerator::class,
         'view' => \Blueprint\Generators\Statements\ViewGenerator::class,
+        'typescript_interface' => \Blueprint\Generators\Statements\TypescriptInterfaceGenerator::class,
     ],
 
     'routes_plural' => true,
