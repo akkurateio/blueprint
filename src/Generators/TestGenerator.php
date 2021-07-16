@@ -58,7 +58,7 @@ class TestGenerator implements Generator
         foreach ($tree->controllers() as $controller) {
             $path = $this->getPath($controller);
 
-            if (! $this->filesystem->exists(dirname($path))) {
+            if (!$this->filesystem->exists(dirname($path))) {
                 $this->filesystem->makeDirectory(dirname($path), 0755, true);
             }
 
@@ -235,7 +235,7 @@ class TestGenerator implements Generator
                             /** @var \Blueprint\Models\Model $local_model */
                             $local_model = $this->tree->modelForContext($qualifier);
 
-                            if (! is_null($local_model) && $local_model->hasColumn($column)) {
+                            if (!is_null($local_model) && $local_model->hasColumn($column)) {
                                 $local_column = $local_model->column($column);
 
                                 $factory = $this->generateReferenceFactory($local_column, $controller, $modelNamespace);
@@ -248,7 +248,7 @@ class TestGenerator implements Generator
 
                                 $setup['data'][] = $faker;
                                 $request_data[$data] = '$' . $variable_name;
-                            } elseif (! is_null($local_model)) {
+                            } elseif (!is_null($local_model)) {
                                 foreach ($local_model->columns() as $local_column) {
                                     if ($local_column->name() === 'id') {
                                         continue;
@@ -449,7 +449,7 @@ class TestGenerator implements Generator
                         }
                         /** @var \Blueprint\Models\Model $local_model */
                         $local_model = $this->tree->modelForContext($model);
-                        if (! is_null($local_model) && $local_model->usesSoftDeletes()) {
+                        if (!is_null($local_model) && $local_model->usesSoftDeletes()) {
                             $assertions['generic'][] = sprintf('$this->assertSoftDeleted($%s);', $variable);
                         } else {
                             $assertions['generic'][] = sprintf('$this->assertDeleted($%s);', $variable);
@@ -461,7 +461,7 @@ class TestGenerator implements Generator
                             /** @var \Blueprint\Models\Model $local_model */
                             $local_model = $this->tree->modelForContext($model);
                             foreach ($request_data as $key => $datum) {
-                                if (! is_null($local_model) && $local_model->hasColumn($key) && $local_model->column($key)->dataType() === 'date') {
+                                if (!is_null($local_model) && $local_model->hasColumn($key) && $local_model->column($key)->dataType() === 'date') {
                                     $this->addImport($controller, 'Carbon\\Carbon');
                                     $assertions['generic'][] = sprintf('$this->assertEquals(Carbon::parse(%s), $%s->%s);', $datum, $variable, $key);
                                 } else {

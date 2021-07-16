@@ -45,8 +45,8 @@ class FactoryGenerator implements Generator
         }
 
         /**
- * @var \Blueprint\Models\Model $model
-*/
+         * @var \Blueprint\Models\Model $model
+         */
         foreach ($tree->models() as $model) {
             if (!Blueprint::isLaravel8OrHigher()) {
                 $this->addImport($model, 'Faker\Generator as Faker');
@@ -90,8 +90,8 @@ class FactoryGenerator implements Generator
         if (!Blueprint::isLaravel8OrHigher()) {
             $stub = str_replace(
                 [
-                "use Faker\Generator as Faker;\r\nuse",
-                "use Faker\Generator as Faker;\nuse"
+                    "use Faker\Generator as Faker;\r\nuse",
+                    "use Faker\Generator as Faker;\nuse"
                 ],
                 "use",
                 $stub
@@ -115,7 +115,7 @@ class FactoryGenerator implements Generator
 
         /**
          * @var \Blueprint\Models\Column $column
-        */
+         */
         foreach ($fillable as $column) {
             if ($column->name() === 'id' || $column->name() === 'parent_id') {
                 continue;

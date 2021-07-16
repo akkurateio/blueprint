@@ -149,7 +149,7 @@ class ControllerGenerator implements Generator
                     $body .= self::INDENT . $statement->output() . PHP_EOL;
 
                     if ($statement->paginate()) {
-                        if (! Str::contains($body, '::all();')) {
+                        if (!Str::contains($body, '::all();')) {
                             $queryStatement = new QueryStatement('all', [$statement->reference()]);
                             $body = implode(PHP_EOL, [
                                 self::INDENT . $queryStatement->output($statement->reference()),
@@ -172,9 +172,9 @@ class ControllerGenerator implements Generator
                     $this->addImport($controller, $this->determineModel($controller, $statement->reference()));
                 } elseif ($statement instanceof QueryStatement) {
                     if (config('blueprint.enabled.query-builder')) {
-                        $output = '$' . Str::camel(Str::plural($controller->name())) . ' = QueryBuilder::for('. $controller->name() .'::class)' . PHP_EOL;
-                        $output .= self::INDENT . self::INDENT . '->allowedFilters([' . $this->getFilters($controller) . '])'. PHP_EOL;
-                        $output .= self::INDENT . self::INDENT . '->allowedIncludes([' . $this->getIncludes($controller) . '])'. PHP_EOL;
+                        $output = '$' . Str::camel(Str::plural($controller->name())) . ' = QueryBuilder::for(' . $controller->name() . '::class)' . PHP_EOL;
+                        $output .= self::INDENT . self::INDENT . '->allowedFilters([' . $this->getFilters($controller) . '])' . PHP_EOL;
+                        $output .= self::INDENT . self::INDENT . '->allowedIncludes([' . $this->getIncludes($controller) . '])' . PHP_EOL;
                         $output .= self::INDENT . self::INDENT;
                         if (config('blueprint.enabled.pagination')) {
                             $output .= config('blueprint.enabled.json-api-paginate') ? '->jsonPaginate();' : '->paginate();';
@@ -285,7 +285,7 @@ class ControllerGenerator implements Generator
 
         if (isset($this->tree->models()[$controller->name()])) {
             $model = $this->tree->models()[$controller->name()];
-            if (! empty($model->relationships())) {
+            if (!empty($model->relationships())) {
                 if (isset($model->relationships()['hasMany'])) {
                     foreach ($model->relationships()['hasMany'] as $relationship) {
                         $relation = Str::plural(Str::lower($relationship));

@@ -40,12 +40,12 @@ class ModelGenerator implements Generator
         }
 
         /**
- * @var \Blueprint\Models\Model $model
-*/
+         * @var \Blueprint\Models\Model $model
+         */
         foreach ($tree->models() as $model) {
             $path = $this->getPath($model);
 
-            if (! $this->filesystem->exists(dirname($path))) {
+            if (!$this->filesystem->exists(dirname($path))) {
                 $this->filesystem->makeDirectory(dirname($path), 0755, true);
             }
 
@@ -109,7 +109,7 @@ class ModelGenerator implements Generator
 
     protected function buildClassPhpDoc(Model $model)
     {
-        if (! config('blueprint.generate_phpdocs')) {
+        if (!config('blueprint.generate_phpdocs')) {
             return '';
         }
 
@@ -117,8 +117,8 @@ class ModelGenerator implements Generator
         $phpDoc .= '/**';
         $phpDoc .= PHP_EOL;
         /**
- * @var Column $column
-*/
+         * @var Column $column
+         */
         foreach ($model->columns() as $column) {
             if ($column->dataType() === 'morphs') {
                 $phpDoc .= ' * @property int $' . $column->name() . '_id';
@@ -167,7 +167,7 @@ class ModelGenerator implements Generator
     {
         $properties = '';
 
-        if (! $model->usesTimestamps()) {
+        if (!$model->usesTimestamps()) {
             $properties .= $this->filesystem->stub('model.timestamps.stub');
         }
 
@@ -175,7 +175,7 @@ class ModelGenerator implements Generator
             $properties .= $this->filesystem->stub('model.guarded.stub');
         } else {
             $columns = $this->fillableColumns($model->columns());
-            if (! empty($columns)) {
+            if (!empty($columns)) {
                 $properties .= PHP_EOL . str_replace('[]', $this->pretty_print_array($columns, false), $this->filesystem->stub('model.fillable.stub'));
             } else {
                 $properties .= $this->filesystem->stub('model.fillable.stub');
@@ -183,18 +183,18 @@ class ModelGenerator implements Generator
         }
 
         $columns = $this->hiddenColumns($model->columns());
-        if (! empty($columns)) {
+        if (!empty($columns)) {
             $properties .= PHP_EOL . str_replace('[]', $this->pretty_print_array($columns, false), $this->filesystem->stub('model.hidden.stub'));
         }
 
         $columns = $this->castableColumns($model->columns());
-        if (! empty($columns)) {
+        if (!empty($columns)) {
             $properties .= PHP_EOL . str_replace('[]', $this->pretty_print_array($columns), $this->filesystem->stub('model.casts.stub'));
         }
 
-        if (! Blueprint::isLaravel8OrHigher()) {
+        if (!Blueprint::isLaravel8OrHigher()) {
             $columns = $this->dateColumns($model->columns());
-            if (! empty($columns)) {
+            if (!empty($columns)) {
                 $properties .= PHP_EOL . str_replace('[]', $this->pretty_print_array($columns, false), $this->filesystem->stub('model.dates.stub'));
             }
         }
@@ -226,7 +226,7 @@ class ModelGenerator implements Generator
                 if (Str::contains($reference, ':')) {
                     if ($type === 'hasManyThrough') {
                         $column_name = Str::beforeLast($reference, ':');
-                        $method_name = Str::beforeLast($reference, ':');
+                        $method_name = Str::afterLast($reference, ':');
                     } else {
                         [$foreign_reference, $column_name] = explode(':', $reference);
 
@@ -253,7 +253,7 @@ class ModelGenerator implements Generator
                     $fqcn = $this->fullyQualifyModelReference($class_name) ?? $model->fullyQualifiedNamespace() . '\\' . $class_name;
                 }
 
-                $fqcn = Str::startsWith($fqcn, '\\') ? $fqcn : '\\'.$fqcn;
+                $fqcn = Str::startsWith($fqcn, '\\') ? $fqcn : '\\' . $fqcn;
 
                 if ($type === 'hasManyThrough') {
                     [$relation, $through] = explode(':', $reference);
@@ -261,7 +261,7 @@ class ModelGenerator implements Generator
                 } elseif ($type === 'morphTo') {
                     $relationship = sprintf('$this->%s()', $type);
                 } elseif ($type === 'morphMany' || $type === 'morphOne') {
-                    $relation = Str::lower($is_model_fqn ? Str::singular(Str::afterLast($column_name, '\\')) :  Str::singular($column_name)) . 'able';
+                    $relation = Str::lower($is_model_fqn ? Str::singular(Str::afterLast($column_name, '\\')) : Str::singular($column_name)) . 'able';
                     $relationship = sprintf('$this->%s(%s::class, \'%s\')', $type, $fqcn, $relation);
                 } elseif (!is_null($key)) {
                     $relationship = sprintf('$this->%s(%s::class, \'%s\', \'%s\')', $type, $fqcn, $column_name, $key);
@@ -306,14 +306,14 @@ class ModelGenerator implements Generator
 
     protected function addTraits(Model $model, $stub)
     {
-        if (! empty($model->traits())) {
+        if (!empty($model->traits())) {
             foreach ($model->traits() as $trait => $import) {
                 $stub = str_replace('use Illuminate\\Database\\Eloquent\\Factories\\HasFactory;', 'use Illuminate\\Database\\Eloquent\\Factories\\HasFactory;' . PHP_EOL . "use $import;", $stub);
                 $stub = Str::replaceFirst('use HasFactory', "use HasFactory, $trait", $stub);
             }
         }
 
-        if (! empty($model->interface())) {
+        if (!empty($model->interface())) {
             foreach ($model->interface() as $interface => $import) {
                 $stub = str_replace('use Illuminate\\Database\\Eloquent\\Factories\\HasFactory;', 'use Illuminate\\Database\\Eloquent\\Factories\\HasFactory;' . PHP_EOL . "use $import;", $stub);
                 if ($model->name() === 'User') {
@@ -347,11 +347,11 @@ class ModelGenerator implements Generator
         return array_diff(
             array_keys($columns),
             [
-            'id',
-            'deleted_at',
-            'created_at',
-            'updated_at',
-            'remember_token',
+                'id',
+                'deleted_at',
+                'created_at',
+                'updated_at',
+                'remember_token',
             ]
         );
     }
@@ -361,8 +361,8 @@ class ModelGenerator implements Generator
         return array_intersect(
             array_keys($columns),
             [
-            'password',
-            'remember_token',
+                'password',
+                'remember_token',
             ]
         );
     }
@@ -389,8 +389,8 @@ class ModelGenerator implements Generator
                 $columns,
                 function (Column $column) {
                     return $column->dataType() === 'date'
-                    || stripos($column->dataType(), 'datetime') !== false
-                    || stripos($column->dataType(), 'timestamp') !== false;
+                        || stripos($column->dataType(), 'datetime') !== false
+                        || stripos($column->dataType(), 'timestamp') !== false;
                 }
             )
         );
@@ -439,7 +439,7 @@ class ModelGenerator implements Generator
         $output = preg_replace('/^\s+/m', '        ', $output);
         $output = preg_replace(['/^array\s\(/', '/\)$/'], ['[', '    ]'], $output);
 
-        if (! $assoc) {
+        if (!$assoc) {
             $output = preg_replace('/^(\s+)[^=]+=>\s+/m', '$1', $output);
         }
 
@@ -496,8 +496,8 @@ class ModelGenerator implements Generator
         // Use respond-statement.php as test case.
 
         /**
- * @var \Blueprint\Models\Model $model
-*/
+         * @var \Blueprint\Models\Model $model
+         */
         $model = $this->tree->modelForContext($model_name);
 
         if (isset($model)) {

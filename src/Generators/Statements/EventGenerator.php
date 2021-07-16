@@ -18,12 +18,12 @@ class EventGenerator extends StatementGenerator
         $stub = $this->filesystem->stub('event.stub');
 
         /**
- * @var \Blueprint\Models\Controller $controller
-*/
+         * @var \Blueprint\Models\Controller $controller
+         */
         foreach ($tree->controllers() as $controller) {
             foreach ($controller->methods() as $method => $statements) {
                 foreach ($statements as $statement) {
-                    if (! $statement instanceof FireStatement) {
+                    if (!$statement instanceof FireStatement) {
                         continue;
                     }
 
@@ -37,7 +37,7 @@ class EventGenerator extends StatementGenerator
                         continue;
                     }
 
-                    if (! $this->filesystem->exists(dirname($path))) {
+                    if (!$this->filesystem->exists(dirname($path))) {
                         $this->filesystem->makeDirectory(dirname($path), 0755, true);
                     }
 

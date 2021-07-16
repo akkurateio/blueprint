@@ -18,8 +18,8 @@ class NotificationGenerator extends StatementGenerator
         $stub = $this->filesystem->stub('notification.stub');
 
         /**
- * @var \Blueprint\Models\Controller $controller
-*/
+         * @var \Blueprint\Models\Controller $controller
+         */
         foreach ($tree->controllers() as $controller) {
             foreach ($controller->methods() as $method => $statements) {
                 foreach ($statements as $statement) {

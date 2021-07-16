@@ -18,12 +18,12 @@ class JobGenerator extends StatementGenerator
         $stub = $this->filesystem->stub('job.stub');
 
         /**
- * @var \Blueprint\Models\Controller $controller
-*/
+         * @var \Blueprint\Models\Controller $controller
+         */
         foreach ($tree->controllers() as $controller) {
             foreach ($controller->methods() as $method => $statements) {
                 foreach ($statements as $statement) {
-                    if (! $statement instanceof DispatchStatement) {
+                    if (!$statement instanceof DispatchStatement) {
                         continue;
                     }
 
@@ -33,7 +33,7 @@ class JobGenerator extends StatementGenerator
                         continue;
                     }
 
-                    if (! $this->filesystem->exists(dirname($path))) {
+                    if (!$this->filesystem->exists(dirname($path))) {
                         $this->filesystem->makeDirectory(dirname($path), 0755, true);
                     }
 

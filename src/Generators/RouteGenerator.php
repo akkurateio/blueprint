@@ -28,8 +28,8 @@ class RouteGenerator implements Generator
         $routes = ['api' => '', 'web' => ''];
 
         /**
- * @var \Blueprint\Models\Controller $controller
-*/
+         * @var \Blueprint\Models\Controller $controller
+         */
         foreach ($tree->controllers() as $controller) {
             $type = $controller->isApiResource() ? 'api' : 'web';
             $routes[$type] .= PHP_EOL . PHP_EOL . $this->buildRoutes($controller);

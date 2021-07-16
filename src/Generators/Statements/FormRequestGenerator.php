@@ -39,12 +39,12 @@ class FormRequestGenerator implements Generator
         $stub = $this->filesystem->stub('request.stub');
 
         /**
- * @var \Blueprint\Models\Controller $controller
-*/
+         * @var \Blueprint\Models\Controller $controller
+         */
         foreach ($tree->controllers() as $controller) {
             foreach ($controller->methods() as $method => $statements) {
                 foreach ($statements as $statement) {
-                    if (! $statement instanceof ValidateStatement) {
+                    if (!$statement instanceof ValidateStatement) {
                         continue;
                     }
 
@@ -56,7 +56,7 @@ class FormRequestGenerator implements Generator
                         continue;
                     }
 
-                    if (! $this->filesystem->exists(dirname($path))) {
+                    if (!$this->filesystem->exists(dirname($path))) {
                         $this->filesystem->makeDirectory(dirname($path), 0755, true);
                     }
 
@@ -87,7 +87,7 @@ class FormRequestGenerator implements Generator
         $stub = str_replace('{{ rules }}', $this->buildRules($context, $validateStatement), $stub);
 
         if (Blueprint::supportsReturnTypeHits()) {
-            $stub = str_replace(['authorize()','rules()'], ['authorize(): bool','rules(): array'], $stub);
+            $stub = str_replace(['authorize()', 'rules()'], ['authorize(): bool', 'rules(): array'], $stub);
         }
 
         return $stub;
@@ -137,13 +137,13 @@ class FormRequestGenerator implements Generator
     private function validationRules(string $qualifier, string $column)
     {
         /**
- * @var \Blueprint\Models\Model $model
-*/
+         * @var \Blueprint\Models\Model $model
+         */
         $model = $this->tree->modelForContext($qualifier);
 
         $rules = [];
 
-        if (! is_null($model)) {
+        if (!is_null($model)) {
             if ($model->hasColumn($column)) {
                 $modelColumn = $model->column($column);
 
@@ -152,8 +152,8 @@ class FormRequestGenerator implements Generator
                 return $rules;
             } else {
                 /**
- * @var \Blueprint\Models\Model $column
-*/
+                 * @var \Blueprint\Models\Model $column
+                 */
                 foreach ($model->columns() as $column) {
                     if ($column->name() === 'id') {
                         continue;

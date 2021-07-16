@@ -26,12 +26,12 @@ class ViewGenerator implements Generator
         $stub = $this->filesystem->stub('view.stub');
 
         /**
- * @var \Blueprint\Models\Controller $controller
-*/
+         * @var \Blueprint\Models\Controller $controller
+         */
         foreach ($tree->controllers() as $controller) {
             foreach ($controller->methods() as $method => $statements) {
                 foreach ($statements as $statement) {
-                    if (! $statement instanceof RenderStatement) {
+                    if (!$statement instanceof RenderStatement) {
                         continue;
                     }
 
@@ -42,7 +42,7 @@ class ViewGenerator implements Generator
                         continue;
                     }
 
-                    if (! $this->filesystem->exists(dirname($path))) {
+                    if (!$this->filesystem->exists(dirname($path))) {
                         $this->filesystem->makeDirectory(dirname($path), 0755, true);
                     }
 
