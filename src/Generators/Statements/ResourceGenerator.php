@@ -121,10 +121,27 @@ class ResourceGenerator implements Generator
             $data[] = self::INDENT . '\'' . $column . '\' => $this->' . $column . ',';
         }
         foreach ($this->belongsToRelations($model) as $modelName => $relation) {
-            $data[] = self::INDENT . '\'' . $relation . '\' => new ' . $modelName . 'Resource($this->whenLoaded(\'' . $relation . '\')),';
+            if (Str::contains($relation, ':')) {
+                [$foreign_reference, $column_name] = explode(':', $relation);
+            } else {
+                $data[] = self::INDENT . '\'' . $relation . '\' => new ' . $modelName . 'Resource($this->whenLoaded(\'' . Str::camel($relation) . '\')),';
+            }
         }
         foreach ($this->hasManyRelations($model) as $modelName => $relation) {
-            $data[] = self::INDENT . '\'' . $relation . '\' => ' . $modelName . 'Resource::collection($this->whenLoaded(\'' . $relation . '\')),';
+            if (Str::contains($relation, ':')) {
+                [$foreign_reference, $column_name] = explode(':', $relation);
+                $data[] = self::INDENT . '\'' . $column_name . '\' => ' . Str::studly($foreign_reference) . 'Resource::collection($this->whenLoaded(\'' . Str::camel($column_name) . '\')),';
+            } else {
+                $data[] = self::INDENT . '\'' . $relation . '\' => ' . $modelName . 'Resource::collection($this->whenLoaded(\'' . Str::camel($relation) . '\')),';
+            }
+        }
+        foreach ($this->belongsToManyRelations($model) as $modelName => $relation) {
+            if (Str::contains($relation, ':')) {
+                [$foreign_reference, $column_name] = explode(':', $relation);
+                $data[] = self::INDENT . '\'' . $column_name . '\' => ' . Str::studly($foreign_reference) . 'Resource::collection($this->whenLoaded(\'' . Str::camel($column_name) . '\')),';
+            } else {
+                $data[] = self::INDENT . '\'' . $relation . '\' => ' . $modelName . 'Resource::collection($this->whenLoaded(\'' . Str::camel($relation) . '\')),';
+            }
         }
         $data[] = '        ];';
 
@@ -149,7 +166,7 @@ class ResourceGenerator implements Generator
         if (!empty($model->relationships())) {
             if (isset($model->relationships()['hasMany'])) {
                 foreach ($model->relationships()['hasMany'] as $relationship) {
-                    $columns[$relationship] = Str::plural(Str::lower($relationship));
+                    $columns[$relationship] = Str::snake(Str::plural($relationship));
                 }
             }
         }
@@ -165,6 +182,19 @@ class ResourceGenerator implements Generator
             foreach ($model->relationships()['belongsTo'] as $relationship) {
                 $column = Str::beforeLast($relationship, '_id');
                 $columns[Str::studly($column)] = $column;
+            }
+        }
+
+        return $columns;
+    }
+
+    private function belongsToManyRelations(Model $model): array
+    {
+        $columns = [];
+
+        if (isset($model->relationships()['belongsToMany'])) {
+            foreach ($model->relationships()['belongsToMany'] as $relationship) {
+                $columns[$relationship] = Str::snake(Str::plural($relationship));
             }
         }
 
