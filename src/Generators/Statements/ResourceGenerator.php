@@ -123,6 +123,7 @@ class ResourceGenerator implements Generator
         foreach ($this->belongsToRelations($model) as $modelName => $relation) {
             if (Str::contains($relation, ':')) {
                 [$foreign_reference, $column_name] = explode(':', $relation);
+                $data[] = self::INDENT . '\'' . $column_name . '\' => new ' . Str::studly($foreign_reference) . 'Resource($this->whenLoaded(\'' . Str::camel($column_name) . '\')),';
             } else {
                 $data[] = self::INDENT . '\'' . $relation . '\' => new ' . $modelName . 'Resource($this->whenLoaded(\'' . Str::camel($relation) . '\')),';
             }
