@@ -121,32 +121,37 @@ class ResourceGenerator implements Generator
             $data[] = self::INDENT . '\'' . $column . '\' => $this->' . $column . ',';
         }
         foreach ($this->belongsToRelations($model) as $modelName => $relation) {
-            if (Str::contains($relation, ':')) {
-                [$foreign_reference, $column_name] = explode(':', $relation);
-                $data[] = self::INDENT . '\'' . $column_name . '\' => new ' . Str::studly($foreign_reference) . 'Resource($this->whenLoaded(\'' . Str::camel($column_name) . '\')),';
-            } else {
-                $data[] = self::INDENT . '\'' . $relation . '\' => new ' . $modelName . 'Resource($this->whenLoaded(\'' . Str::camel($relation) . '\')),';
-            }
+            $data[] = $this->writeResourceRelation($modelName, $relation);
         }
         foreach ($this->hasManyRelations($model) as $modelName => $relation) {
-            if (Str::contains($relation, ':')) {
-                [$foreign_reference, $column_name] = explode(':', $relation);
-                $data[] = self::INDENT . '\'' . $column_name . '\' => ' . Str::studly($foreign_reference) . 'Resource::collection($this->whenLoaded(\'' . Str::camel($column_name) . '\')),';
-            } else {
-                $data[] = self::INDENT . '\'' . $relation . '\' => ' . $modelName . 'Resource::collection($this->whenLoaded(\'' . Str::camel($relation) . '\')),';
-            }
+            $data[] = $this->writeCollectionRelation($modelName, $relation);
         }
         foreach ($this->belongsToManyRelations($model) as $modelName => $relation) {
-            if (Str::contains($relation, ':')) {
-                [$foreign_reference, $column_name] = explode(':', $relation);
-                $data[] = self::INDENT . '\'' . $column_name . '\' => ' . Str::studly($foreign_reference) . 'Resource::collection($this->whenLoaded(\'' . Str::camel($column_name) . '\')),';
-            } else {
-                $data[] = self::INDENT . '\'' . $relation . '\' => ' . $modelName . 'Resource::collection($this->whenLoaded(\'' . Str::camel($relation) . '\')),';
-            }
+            $data[] = $this->writeCollectionRelation($modelName, $relation);
         }
         $data[] = '        ];';
 
         return implode(PHP_EOL, $data);
+    }
+
+    private function writeResourceRelation($modelName, $relation): string
+    {
+        if (Str::contains($relation, ':')) {
+            [$foreign_reference, $column_name] = explode(':', $relation);
+            return self::INDENT . '\'' . $column_name . '\' => new ' . Str::studly($foreign_reference) . 'Resource($this->whenLoaded(\'' . Str::camel($column_name) . '\')),';
+        } else {
+            return self::INDENT . '\'' . $relation . '\' => new ' . $modelName . 'Resource($this->whenLoaded(\'' . Str::camel($relation) . '\')),';
+        }
+    }
+
+    private function writeCollectionRelation($modelName, $relation): string
+    {
+        if (Str::contains($relation, ':')) {
+            [$foreign_reference, $column_name] = explode(':', $relation);
+            return self::INDENT . '\'' . $column_name . '\' => ' . Str::studly($foreign_reference) . 'Resource::collection($this->whenLoaded(\'' . Str::camel($column_name) . '\')),';
+        } else {
+            return self::INDENT . '\'' . $relation . '\' => ' . $modelName . 'Resource::collection($this->whenLoaded(\'' . Str::camel($relation) . '\')),';
+        }
     }
 
     private function visibleColumns(Model $model)
