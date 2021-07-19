@@ -288,13 +288,13 @@ class ControllerGenerator implements Generator
             if (!empty($model->relationships())) {
                 if (isset($model->relationships()['hasMany'])) {
                     foreach ($model->relationships()['hasMany'] as $relationship) {
-                        $relation = Str::plural(Str::lower($relationship));
+                        $relation = Str::Camel(Str::plural($relationship));
                         $includes .= "'$relation'" . ', ';
                     }
                 }
                 if (isset($model->relationships()['belongsTo'])) {
                     foreach ($model->relationships()['belongsTo'] as $relationship) {
-                        $relation = Str::beforeLast($relationship, '_id');
+                        $relation = Str::camel(Str::beforeLast($relationship, '_id'));
                         $includes .= "'$relation'" . ', ';
                     }
                 }
