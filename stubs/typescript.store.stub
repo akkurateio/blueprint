@@ -1,0 +1,43 @@
+import type { GetterTree, MutationTree } from 'vuex'
+import { I{{modelStudly}} } from '~/interfaces/I{{modelStudly}}'
+
+export const namespace = '{{modelCamelPlural}}'
+
+export interface I{{modelStudly}}State {
+  list: I{{modelStudly}}[]
+}
+
+export const state = (): I{{modelStudly}}State => ({
+  list: [],
+})
+
+export const getters: GetterTree<I{{modelStudly}}State, I{{modelStudly}}State> = {}
+
+export const MutationType = {
+  SET_{{modelUpperSnakePlural}}: 'set{{modelStudlyPlural}}',
+  ADD_{{modelUpperSnake}}: 'add{{modelStudly}}',
+  UPDATE_{{modelUpperSnake}}: 'update{{modelStudly}}',
+  REMOVE_{{modelUpperSnake}}: 'remove{{modelStudly}}',
+}
+
+export const mutations: MutationTree<I{{modelStudly}}State> = {
+  [MutationType.SET_{{modelUpperSnakePlural}}]: (state, newList: I{{modelStudly}}[]) => {
+    state.list = newList
+  },
+  [MutationType.ADD_{{modelUpperSnake}}]: (state, new{{modelStudly}}: I{{modelStudly}}) => {
+    state.list.push(new{{modelStudly}})
+  },
+  [MutationType.UPDATE_{{modelUpperSnake}}]: (state, updated{{modelStudly}}: I{{modelStudly}}) => {
+    const item: I{{modelStudly}} | undefined = state.list.find(
+      (item) => item.id === updated{{modelStudly}}.id
+    )
+    if (item) {
+      const itemIndex = state.list.indexOf(item)
+      state.list[itemIndex] = updated{{modelStudly}}
+      state.list = [...state.list]
+    }
+  },
+  [MutationType.REMOVE_{{modelUpperSnake}}]: (state, {{modelCamel}}ToRemove: I{{modelStudly}}) => {
+    state.list = state.list.filter((item) => item.id !== {{modelCamel}}ToRemove.id)
+  },
+}

@@ -1,4 +1,4 @@
-{{ imports }}export interface Model{{ model }} {
+{{ imports }}export interface I{{ model }} {
   id: number
   //
 }

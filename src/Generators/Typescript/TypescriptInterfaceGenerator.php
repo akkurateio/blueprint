@@ -1,6 +1,6 @@
 <?php
 
-namespace Blueprint\Generators\Statements;
+namespace Blueprint\Generators\Typescript;
 
 use Blueprint\Contracts\Generator;
 use Blueprint\Models\Model;
@@ -62,7 +62,7 @@ class TypescriptInterfaceGenerator implements Generator
 
     protected function getPath(string $name)
     {
-        return storage_path('app/export/interfaces/') . Str::camel($name) . '.ts';
+        return storage_path('app/export/interfaces/I') . Str::studly($name) . '.ts';
     }
 
     protected function populateStub(string $stub, $model)
@@ -112,9 +112,9 @@ class TypescriptInterfaceGenerator implements Generator
                 if ($dataType === 'enum') {
                     $dataType = 'string';
                 }
-                $definition .= self::INDENT . "$columnName: ";
+                $definition .= self::INDENT . "$columnName";
+                $definition .= $column->isNullable() ? '?: ' : ': ';
                 $definition .= $dataType;
-                $definition .= $column->isNullable() ? ' | null' : '';
                 $definition .= PHP_EOL;
 
             }
@@ -125,20 +125,22 @@ class TypescriptInterfaceGenerator implements Generator
             if (Str::contains($relation, ':')) {
                 $reference = Str::beforeLast($relation, ':');
                 $columnName = Str::afterLast($relation, ':');
-                $definition .= self::INDENT . Str::camel($columnName) . ': Interface' . Str::studly($reference);
-                $definition .= $column->isNullable() ? ' | null' : '';
+                $definition .= self::INDENT . Str::camel($columnName);
+                $definition .= $column->isNullable() ? '?: I' : ': I';
+                $definition .= Str::studly($reference);
                 $definition .= PHP_EOL;
             } else {
-                $definition .= self::INDENT . Str::camel($relation) . ': Interface' . Str::studly($relation);
-                $definition .= $column->isNullable() ? ' | null' : '';
+                $definition .= self::INDENT . Str::camel($relation);
+                $definition .= $column->isNullable() ? '?: I' : ': I';
+                $definition .= Str::studly($relation);
                 $definition .= PHP_EOL;
             }
 
         }
 
         foreach ($this->hasManyRelations($model) as $modelName => $relation) {
-            $definition .= self::INDENT . Str::camel($relation) . ': object';
-            $definition .= $column->isNullable() ? ' | null' : '';
+            $definition .= self::INDENT . Str::camel($relation);
+            $definition .= $column->isNullable() ? '?: object' : ': object';
             $definition .= PHP_EOL;
         }
 
@@ -152,7 +154,7 @@ class TypescriptInterfaceGenerator implements Generator
         if (!empty($model->relationships())) {
             if (isset($model->relationships()['hasMany'])) {
                 foreach ($model->relationships()['hasMany'] as $relationship) {
-                    $columns[$relationship] = Str::plural(Str::lower($relationship));
+                    $columns[$relationship] = Str::camel(Str::plural($relationship));
                 }
             }
         }
@@ -184,16 +186,9 @@ class TypescriptInterfaceGenerator implements Generator
 
             foreach ($imports as $import)
             {
-                if (Str::contains($import, ':')) {
-                    $reference = Str::beforeLast($import, ':');
-                    if (! strpos($data, 'import { Interface' . Str::studly($reference))) {
-                        $data .= 'import { Interface' . Str::studly($reference) . ' } from '. "'~/interfaces/" . Str::camel($reference) . "'" . PHP_EOL;
-                    }
-                } else {
-                    if (! strpos($data, 'import { Interface' . Str::studly($import))) {
-                        $data .= 'import { Interface' . Str::studly($import) . ' } from '. "'~/interfaces/" . Str::camel($import) . "'" . PHP_EOL;
-                    }
-
+                $reference = Str::contains($import, ':') ? Str::beforeLast($import, ':') : $import;
+                if (! Str::contains($data, 'import { I' . Str::studly($reference))) {
+                    $data .= 'import { I' . Str::studly($reference) . ' } from '. "'~/interfaces/I" . Str::studly($reference) . "'" . PHP_EOL;
                 }
             }
             $data .= PHP_EOL;

@@ -1,0 +1,73 @@
+import { Vue } from 'vue-property-decorator'
+import { I{{modelStudly}} } from '~/interfaces/I{{modelStudly}}'
+import {
+  handleErrors,
+  InterfaceServiceResponse,
+} from '~/interfaces/InterfaceService'
+
+export const fetchAll{{modelStudlyPlural}} = async ({
+  $axios,
+  $store,
+}: Vue): Promise<InterfaceServiceResponse> => {
+  return await $axios
+    .$get(`${process.env.API_URL}/{{modelKebabPlural}}`)
+    .then((response) => {
+      $store.commit('{{modelCamelPlural}}/set{{modelStudlyPlural}}', response.data)
+      return {
+        data: response.data,
+      }
+    })
+    .catch((response) => {
+      return handleErrors(response)
+    })
+}
+
+export const create{{modelStudly}} = async (
+  { $axios, $store }: Vue,
+  {{modelCamel}}: I{{modelStudly}}
+): Promise<InterfaceServiceResponse> => {
+  return await $axios
+    .$post(`${process.env.API_URL}/{{modelKebabPlural}}`, {{modelCamel}})
+    .then((response) => {
+      $store.commit('{{modelCamelPlural}}/add{{modelStudly}}', response.data)
+      return {
+        data: response.data,
+      }
+    })
+    .catch((response) => {
+      return handleErrors(response)
+    })
+}
+
+export const update{{modelStudly}} = async (
+  { $axios, $store }: Vue,
+  {{modelCamel}}: I{{modelStudly}}
+): Promise<InterfaceServiceResponse> => {
+  return await $axios
+    .$put(`${process.env.API_URL}/{{modelKebabPlural}}/${{{modelCamel}}.id}`, {{modelCamel}})
+    .then((response) => {
+      $store.commit('{{modelCamelPlural}}/update{{modelStudly}}', response.data)
+      return {
+        data: response.data,
+      }
+    })
+    .catch((response) => {
+      return handleErrors(response)
+    })
+}
+
+export const remove{{modelStudly}} = async (
+  { $axios }: Vue,
+  {{modelCamel}}: I{{modelStudly}}
+): Promise<InterfaceServiceResponse> => {
+  return await $axios
+    .$delete(`${process.env.API_URL}/{{modelKebabPlural}}/${{{modelCamel}}.id}`)
+    .then(() => {
+      return {
+        data: true,
+      }
+    })
+    .catch((response) => {
+      return handleErrors(response)
+    })
+}
