@@ -275,4 +275,4 @@ php artisan blueprint:build
 
 Pour générer uniquement les fichiers du nouveau générateur, penser à commenter tous les autres dans le fichier `blueprint.php` du projet, comme dans l’exemple ci-dessus.
 
-Une fois que le résultat attende est obtenu, emballer le tout dans un joli commit.
+Une fois que le résultat attendu est obtenu, emballer le tout dans un joli commit.
