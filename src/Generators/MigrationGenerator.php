@@ -66,8 +66,8 @@ class MigrationGenerator implements Generator
         $stub = $this->filesystem->stub('migration.stub');
 
         /**
- * @var \Blueprint\Models\Model $model
-*/
+         * @var \Blueprint\Models\Model $model
+        */
         foreach ($tree->models() as $model) {
             if ($model->name() === 'User') {
                 if (file_exists($file = database_path('migrations/2014_10_12_000000_create_users_table.php'))) {
