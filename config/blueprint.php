@@ -176,6 +176,7 @@ return [
 
     'enabled' => [
         'user-management' => config('akkurate.features') && in_array('user-management', config('akkurate.features')),
+        'newsletter' => config('akkurate.features') && in_array('newsletter', config('akkurate.features')),
         'cashier' => config('akkurate.features') && in_array('cashier', config('akkurate.features')),
         'permissions' => config('akkurate.features') && in_array('spatie-permissions', config('akkurate.features')),
         'preferences' => config('akkurate.features') && in_array('preferences', config('akkurate.features')),
