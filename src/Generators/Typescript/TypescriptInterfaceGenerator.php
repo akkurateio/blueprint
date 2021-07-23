@@ -52,6 +52,14 @@ class TypescriptInterfaceGenerator implements Generator
             $output['created'][] = $path;
         }
 
+        if (config('blueprint.enabled.user-management')) {
+            $this->filesystem->put(storage_path('app/export/interfaces/ILogin.ts'), $this->filesystem->stub('typescript.interface.login.stub'));
+        }
+
+        if (config('blueprint.enabled.newsletter')) {
+            $this->filesystem->put(storage_path('app/export/interfaces/INewsletter.ts'), $this->filesystem->stub('typescript.interface.newsletter.stub'));
+        }
+
         return $output;
     }
 
@@ -187,7 +195,7 @@ class TypescriptInterfaceGenerator implements Generator
             foreach ($imports as $import)
             {
                 $reference = Str::contains($import, ':') ? Str::beforeLast($import, ':') : $import;
-                if (! Str::contains($data, 'import { I' . Str::studly($reference))) {
+                if (! Str::contains($data, 'import { I' . Str::studly($reference) . ' } from ')) {
                     $data .= 'import { I' . Str::studly($reference) . ' } from '. "'~/interfaces/I" . Str::studly($reference) . "'" . PHP_EOL;
                 }
             }
